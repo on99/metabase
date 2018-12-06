@@ -192,9 +192,9 @@
 (defn- date [unit expr]
   (case unit
     :default         expr
-    :minute          (trunc-with-format "%Y-%m-%d %H:%i" expr)
+    :minute          (date-format "%Y-%m-%d %H:%i" expr)
     :minute-of-hour  (hx/minute expr)
-    :hour            (trunc-with-format "%Y-%m-%d %H" expr)
+    :hour            (date-format "%Y-%m-%d %H" expr)
     :hour-of-day     (hx/hour expr)
     :day             (hsql/call :date expr)
     :day-of-week     (hsql/call :dayofweek expr)
@@ -207,9 +207,7 @@
                                              (hx/literal " Sunday")))
     ;; mode 6: Sunday is first day of week, first week of year is the first one with 4+ days
     :week-of-year    (hx/inc (hx/week expr 6))
-    :month           (str-to-date "%Y-%m-%d"
-                                  (hx/concat (date-format "%Y-%m" expr)
-                                             (hx/literal "-01")))
+    :month           (date-format  "%Y-%m" expr)
     :month-of-year   (hx/month expr)
     ;; Truncating to a quarter is trickier since there aren't any format strings.
     ;; See the explanation in the H2 driver, which does the same thing but with slightly different syntax.
